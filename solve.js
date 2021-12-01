@@ -1,5 +1,7 @@
 import colors from 'colors'
 
+console.debug = function() {}
+
 export default async (year, day, solutionsPromise) => {
   // @TODO: Fix this jank
   const resolvedSolutions = await solutionsPromise
