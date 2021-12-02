@@ -1,4 +1,5 @@
 # [Advent of Code](https://adventofcode.com/) 🎄
+thanks to [amorriscode/advent-of-code](https://github.com/amorriscode/advent-of-code) for base setup and insparation!
 
 ## Setup
 
