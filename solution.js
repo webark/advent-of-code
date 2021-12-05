@@ -14,7 +14,8 @@ function timedFunction(method) {
     time: performance.now() - start,
   };
 }
-
+silver(data);
+gold(data);
 const silverSolution = timedFunction(() => silver(data));
 const goldSolution = timedFunction(() => gold(data));
 
