@@ -1,4 +1,4 @@
-export default function solution(input) {
+export function solution(input) {
   const threshold = Math.ceil(input.length / 2);
   const tallies = [];
 

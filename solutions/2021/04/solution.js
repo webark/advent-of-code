@@ -1,4 +1,4 @@
-// export default function solution(input) {
+// export function solution(input) {
 //   const [numbers, ...boards] = input;
 
 //   for (const number of numbers.split(',')) {
@@ -50,7 +50,7 @@ function getBoardTotal(board, number, runningTotoal = 0) {
 }
 
 
-export default function solution(input) {
+export function solution(input) {
   const { numbers, boards } = processInput(input);
   const found = new Map();
   const boardTotals = [];

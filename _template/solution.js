@@ -1,4 +1,4 @@
-export default function solution(input) {
+export function solution(input) {
   return 0;
 }
 

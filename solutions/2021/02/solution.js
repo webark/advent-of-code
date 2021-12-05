@@ -1,4 +1,4 @@
-export default function solution(input, aimed = false) {
+export function solution(input, aimed = false) {
   const { forward, aimedDepth, depth } = input.reduce(function(totals, movement) {
     const [direction, amount] = movement.split(' ');
 

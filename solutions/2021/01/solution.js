@@ -1,4 +1,4 @@
-export default function solution(input, range = 1) {
+export function solution(input, range = 1) {
   return input.reduce(function(count, depth, index, array) {
     const isDepthIncreasing = parseInt(depth) < parseInt(array[index + range]);
     return count + Number(isDepthIncreasing);
