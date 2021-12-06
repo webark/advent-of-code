@@ -14,8 +14,12 @@ function timedFunction(method) {
     time: performance.now() - start,
   };
 }
-silver(data);
-gold(data);
+
+const times = Array(20).fill(10).map(_ => ({
+  silver: timedFunction(() => silver(data)).time,
+  gold: timedFunction(() => gold(data)).time,
+}));
+
 const silverSolution = timedFunction(() => silver(data));
 const goldSolution = timedFunction(() => gold(data));
 
