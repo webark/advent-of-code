@@ -16,53 +16,65 @@
 //   return false;
 // }
 
+function isSmallCave(cave) {
+  return /^[a-z]{1,2}$/.test(cave);
+}
 
-let allPathsCount = 0;
+function smallCavesVistedTwice(path) {
+  const duplicateSmallCaves = path.reduce(function(caves, cave) {
+    if (isSmallCave(cave)) caves[cave] = ++caves[cave] || 1;
+    return caves;
+  }, {})
+  console.log(Object.values(Object.values(duplicateSmallCaves).filter(count => count > 1)))
+  return Object.values(duplicateSmallCaves).filter(count => count > 0);
+}
 
 function findPath(map, current, path = [], smallCaves = new Map()) {
   path.push(current);
 
-  if (/[a-z]/.test(current)) {
+  if (current === 'end') return path.join(',');
+
+  if (isSmallCave(current)) {
     smallCaves.set(current, (smallCaves.get(current) || 0) + 1);
   }
 
-  if (current === 'end') { return allPathsCount++; }
+  const smallCavesVistedTwice = Array.from(smallCaves.values()).filter(cave => cave > 1);
 
-  for (const part of map.get(current)) {
-    const smallCavesVistedTwice = Array.from(smallCaves.values()).filter(cave => cave > 1)
-    if (smallCavesVistedTwice.length === 0 || (smallCavesVistedTwice.length === 1 && smallCavesVistedTwice[0] <= 2)) {
-    // if (!smallCaves.has(part)) {
-      findPath(map, part, [...path], new Map(smallCaves));
-    }
-  }
+  return map.get(current).filter(function() {
+    return smallCavesVistedTwice.length === 0 || (smallCavesVistedTwice.length === 1 && smallCavesVistedTwice[0] <= 2)
+  }).map(part => findPath(map, part, [...path], new Map(smallCaves))).flat()
 }
+
+function findPath2(map, current, path = []) {
+  path.push(current);
+
+  if (current === 'end') return path.join(',');
+
+  return map.get(current).filter(function(part) {
+    return !isSmallCave(part) || !path.includes(part);
+  }).map(part => findPath2(map, part, [...path])).flat()
+}
+
 
 function setPath(map, a, b) {
-  const dest = map.get(a) || [];
-  dest.push(b)
-  map.set(a, dest);
+  map.set(a, (map.get(a) || []).concat(b));
 }
 
 
-export function solution(input) {
-  allPathsCount = 0;
+export function solution(input, caveFinder = findPath2) {
   const paths = input.map(line => line.split('-'));
   const map = new Map();
 
   for (const [a, b] of paths) {
-    if (b === 'start' || a === 'end') {
+    if (a !== 'start' && b !== 'end') {
       setPath(map, b, a);
-    } else {
+    }
+    if (b !== 'start' && a !== 'end') {
       setPath(map, a, b);
-      if (a !== 'start' && b !== 'end') {
-        setPath(map, b, a);
-      }
     }
   }
 
-  const allPaths = findPath(map, 'start');
-
-  return allPathsCount;
+  return caveFinder(map, 'start').length;
 }
 
 export function silver(input) {
@@ -70,5 +82,5 @@ export function silver(input) {
 }
 
 export function gold(input) {
-  return solution(input);
+  return solution(input, findPath);
 }
