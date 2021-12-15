@@ -1,30 +1,53 @@
-function thing(polymer, rules, pair, totalSteps, step = 0) {
-  if (step++ === totalSteps) return;
-
-  const element = rules.get(pair);
-  polymer.set(element, polymer.get(element) + 1);
-
-  thing(polymer, rules, pair[0] + element, totalSteps, step);
-  thing(polymer, rules, element + pair[1], totalSteps, step);
+function incrementMapKey(map, key, amount = 1) {
+  map.set(key, map.get(key) + amount);
 }
 
-export function solution(input, steps = 10) {
-  const [polymerTemplate, rulesRaw] = input;
+function step(rules, elementCount, elements) {
+  const oldElementCounts = new Map(elementCount);
 
-  const rules = new Map(rulesRaw.split('\n').map(line => line.split(' -> ')));
-  const polymer = new Map();
+  for (const pair of elementCount.keys()) {
+    const element = rules.get(pair);
+    const count = oldElementCounts.get(pair);
 
-  for (const element of polymerTemplate) {
-    polymer.set(element, (polymer.get(element) || 0) + 1)
-  }
+    incrementMapKey(elements, element, count);
+    incrementMapKey(elementCount, pair, -count);
 
-  [...polymerTemplate].forEach(function(char, index, charArray) {
-    if (index) thing(polymer, rules, charArray[index - 1] + char, steps);
+    [pair[0] + element, element + pair[1]].forEach(function(newPair) {
+      incrementMapKey(elementCount, newPair, count);
+    })
+  };
+}
+
+function processInput([polymerTemplate, rulesRaw]) {
+  const rules = new Map();
+  const elementCount = new Map();
+  const elements = new Map();
+
+  rulesRaw.split('\n').forEach(function(line) {
+    const [pair, element] = line.split(' -> ');
+
+    rules.set(pair, element)
+    elements.set(element, 0);
+    elementCount.set(pair, 0);
   });
 
-  console.log(polymer)
+  [...polymerTemplate].forEach(function(element, index) {
+    incrementMapKey(elements, element);
+    if (index) incrementMapKey(elementCount, polymerTemplate[index - 1] + element);
+  });
 
-  return Math.max(...polymer.values()) - Math.min(...polymer.values())
+  return { rules, elementCount, elements };
+}
+
+
+export function solution(input, steps) {
+  const { rules, elementCount, elements } = processInput(input);
+
+  while (steps-- > 0) {
+    step(rules, elementCount, elements);
+  }
+
+  return Math.max(...elements.values()) - Math.min(...elements.values())
 }
 
 export function silver(input) {
