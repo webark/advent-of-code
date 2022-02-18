@@ -1,7 +1,6 @@
 class Fish {
   number = 0;
   depth = 0;
-  position = 0;
   next = null;
   prev = null;
 
@@ -10,7 +9,7 @@ class Fish {
   }
 
   explode() {
-    const { number, depth, position } = this.out;
+    const { number, depth } = this.out;
 
     this.prev.number += number;
 
@@ -19,7 +18,6 @@ class Fish {
     const fish = new Fish({
       number: 0,
       depth: depth - 1,
-      position: Number(this.prev.position === position),
       prev: this.prev,
       next: this.next.next,
     })
@@ -36,14 +34,12 @@ class Fish {
     const rightFish = new Fish({
       number: Math.floor(number / 2),
       depth: depth + 1,
-      position: 0,
       prev: this.prev,
     });
 
     const leftFish = new Fish({
       number: Math.ceil(number / 2),
       depth: depth + 1,
-      position: 1,
       prev: rightFish,
       next: this.next,
     });
@@ -58,36 +54,32 @@ class Fish {
   get out() {
     return {
       number: this.number,
-      position: this.position,
       depth: this.depth,
+      reason: this.reason,
     }
   }
 }
 
 function parseFish(line, preFish) {
   let depth = -1;
-  let position = 0;
   let currentFish = preFish;
 
   for (const char of line) {
     switch (char) {
+      case ',':
+        break;
       case '[':
         depth++;
-        position = 0;
         break;
       case ']':
         depth--;
-        position = 0;
-        break;
-      case ',':
-        position = Number(!position);
         break;
       default:
         const nextFish = new Fish({
           number: parseInt(char),
           depth,
-          position,
           prev: currentFish,
+          reason: 'original'
         });
 
         if (currentFish) {
@@ -169,12 +161,11 @@ function getMagnitude(preFish, currentDepth = 2) {
   while(currentFish.next) {
     currentFish = currentFish.next;
     if (currentFish.depth > currentDepth) {
-      const magA = currentFish.number * (3 - currentFish.position);
-      const magB = currentFish.next.number * (3 - currentFish.next.position);
+      const magA = currentFish.number * 3;
+      const magB = currentFish.next.number * 2;
       const newFish = new Fish({
         number: magA + magB,
         depth: currentFish.depth - 1,
-        position: Number(currentFish.prev.position === currentFish.position),
         prev: currentFish.prev,
         next: currentFish.next.next,
         reason: 'summed',
@@ -209,5 +200,17 @@ export function silver(input) {
 }
 
 export function gold(input) {
-  return 0;
+  let maxScore = 0;
+  const sortedInput = [...input].sort((a, b) => b.length - a.length).slice(0, 50);
+
+  for (const lineA of sortedInput) {
+    for (const lineB of sortedInput) {
+      if (lineA !== lineB) {
+        const newScore = solution([lineA, lineB]);
+        maxScore = Math.max(maxScore, newScore);
+      }
+    }
+  }
+
+  return maxScore;
 }

@@ -9,7 +9,7 @@ test('silver example', () => {
 })
 
 test('gold example', () => {
-  assert.equal(gold(example), 0);
+  assert.equal(gold(example), 3993);
 })
 
 test.run();
