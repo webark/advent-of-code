@@ -1,6 +1,6 @@
 export function letterToNumber(char) {
   if (char.length !== 1 || /[^a-zA-Z]/.test(char)) {
-    throw new Error('only accepts a single letter');
+    throw new Error(`only accepts a single letter, received ${char}`);
   }
 
   const code = char.charCodeAt(0);
