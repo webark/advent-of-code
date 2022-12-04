@@ -4,7 +4,7 @@ import { performance } from 'perf_hooks';
 const year = process.env.YEAR
 const day = process.env.DAY
 
-const { silver, gold } = await import(`./solutions/${year}/${day}/solution.js`);
+const { silver, gold, parse } = await import(`./solutions/${year}/${day}/solution.js`);
 const { data } = await import(`./solutions/${year}/${day}/input.js`);
 
 function timedFunction(method) {
@@ -15,13 +15,18 @@ function timedFunction(method) {
   };
 }
 
-const times = Array(20).fill(10).map(_ => ({
-  silver: timedFunction(() => silver(data)).time,
-  gold: timedFunction(() => gold(data)).time,
-}));
 
-const silverSolution = timedFunction(() => silver(data));
-const goldSolution = timedFunction(() => gold(data));
+Array(20).fill(10).map(function() {
+  const parsed = timedFunction(() => parse(data));
+  return {
+    silver: timedFunction(() => silver(parsed.result)).time,
+    gold: timedFunction(() => gold(parsed.result)).time,
+  };
+});
+
+const parsedInput = timedFunction(() => parse(data));
+const silverSolution = timedFunction(() => silver(parsedInput.result));
+const goldSolution = timedFunction(() => gold(parsedInput.result));
 
 console.log('                                       '.bgRed)
 
@@ -30,7 +35,7 @@ console.log(
 )
 
 console.log('                                       '.bgRed)
-
+console.log('parse time', parsedInput.time);
 console.log('')
 
 console.log(`🎄🎄 DAY ${day} SILVER 🎄🎄`.bold.green)

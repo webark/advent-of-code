@@ -1,3 +1,7 @@
+export function parse(input) {
+  return input.split('\n\n').map(group => group.split('\n').map(Number));
+}
+
 export function solution(input, amount) {
   return sum(numSort(input.map(sum)).slice(-amount));
 }

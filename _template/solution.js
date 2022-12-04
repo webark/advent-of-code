@@ -1,3 +1,7 @@
+export function parse(input) {
+  return input;
+}
+
 export function solution(input) {
   return 0;
 }
